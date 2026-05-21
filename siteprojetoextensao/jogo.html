@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Missão 300 Horas - UFRRJ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    touch-action: none; 
+  }
+
+  #game-wrapper {
+    position: relative;
+    width: 100%;       
+    max-width: 480px;  
+  }
+
+  #hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: #0f1030;
+    border: 2px solid #2a2a6a;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .hud-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hud-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .hud-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: #6666aa;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+  }
+
+  .hud-value {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 13px;
+    color: #ffffff;
+  }
+
+  .action-icon {
+    font-size: 10px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: 0.2s;
+    user-select: none;
+  }
+  .action-icon.pause { background: #0a1a3a; border: 1px solid #2255cc; }
+  .action-icon.exit { background: #2a0505; border: 1px solid #cc2222; }
+  .action-icon:hover { transform: scale(1.1); filter: brightness(1.2); }
+
+  #hours-bar-wrapper { width: 130px; }
+
+  #hours-bar-bg {
+    width: 100%;
+    height: 14px;
+    background: #1a1a3a;
+    border-radius: 7px;
+    border: 1px solid #2a2a6a;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+
+  #hours-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #22cc88, #44ffaa);
+    border-radius: 7px;
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  #canvas {
+    display: block;
+    width: 100%; 
+    height: auto;
+    border-left: 2px solid #2a2a6a;
+    border-right: 2px solid #2a2a6a;
+  }
+
+  #mobile-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: #0f1030;
+    border: 2px solid #2a2a6a;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .ctrl-btn {
+    background: #1a1a4a;
+    color: #ffffff;
+    border: 2px solid #4444aa;
+    border-radius: 12px;
+    width: 65px;
+    height: 55px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #0d0d2a;
+  }
+  
+  .ctrl-btn:active {
+    transform: translateY(4px);
+    box-shadow: none;
+    background: #222266;
+  }
+
+  .ctrl-text {
+    text-align: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: #5555aa;
+    line-height: 1.6;
+  }
+
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(5, 5, 20, 0.96);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border-radius: 0 0 10px 10px;
+    padding: 20px;
+    overflow-y: auto; 
+  }
+
+  #overlay-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    padding: 20px 0;
+  }
+
+  .overlay-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: #ffffff;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .overlay-subtitle {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: #8888cc;
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+
+  .overlay-text {
+    font-size: 11px;
+    color: #aaaacc;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    max-width: 360px;
+  }
+
+  .input-container {
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 15px;
+    text-align: left;
+  }
+  
+  .input-label {
+    display: block;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: #8888cc;
+    margin-bottom: 6px;
+  }
+
+  .game-input {
+    width: 100%;
+    padding: 12px;
+    background: #0f1030;
+    border: 2px solid #4444aa;
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    outline: none;
+    transition: 0.2s;
+    text-align: center;
+  }
+
+  .game-input:focus {
+    border-color: #6699ff;
+    background: #1a1a4a;
+  }
+
+  .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    background: #2244cc;
+    color: #ffffff;
+    border: 2px solid #4466ff;
+    padding: 16px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.15s;
+  }
+
+  .btn.green { background: #116644; border-color: #22cc88; }
+  .btn.red { background: #661122; border-color: #cc3344; }
+  .btn.dark { background: #1a1a1a; border-color: #444; color: #ccc; }
+  .btn.dark:hover { background: #333; border-color: #666; color: #fff; }
+
+  .phase-badge {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+
+  .badge-blue { background: #0d1a4a; color: #6699ff; border: 1px solid #2244aa; }
+  .badge-amber { background: #2a1a00; color: #ffaa22; border: 1px solid #774400; }
+  .badge-green { background: #001a0d; color: #22ee88; border: 1px solid #116633; }
+
+  #toast {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(10,10,40,0.95);
+    border: 1px solid #4444aa;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: #ffffff;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.3s;
+    text-align: center;
+    max-width: 380px;
+    white-space: normal;
+    line-height: 1.7;
+  }
+
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 10px;
+    color: #aaaacc;
+    text-align: left;
+  }
+
+  .legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .columns-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px 10px;
+    width: 100%;
+    max-width: 380px;
+    margin-bottom: 12px;
+  }
+
+  .win-certificate {
+    border: 2px solid #aa8822;
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 18px;
+    background: #0d0c00;
+    max-width: 360px;
+    width: 100%;
+  }
+
+  .cert-title { font-family: 'Press Start 2P', monospace; font-size: 8px; color: #ccaa44; letter-spacing: 2px; margin-bottom: 8px; }
+  .cert-name { font-size: 15px; font-weight: 900; color: #ffffff; margin-bottom: 4px; }
+  .cert-body { font-size: 11px; color: #998855; line-height: 1.6; }
+
+  /* Ajustes para o vídeo não cortar na tela de certificado */
+  .remove-black-bg {
+    mix-blend-mode: screen;
+    width: 200px; /* Aumentado */
+    height: 200px; /* Altura fixa */
+    object-fit: contain; /* Garante que o vídeo não seja cortado */
+    display: block;
+    margin: 10px auto 10px auto; /* Abaixa um pouquinho o vídeo */
+  }
+</style>
+</head>
+<body>
+
+<video id="vid-correndo" src="videocapivaracorrendo.webm" preload="auto" autoplay loop muted playsinline style="display:none;"></video>
+
+<div id="game-wrapper">
+  <div id="hud">
+    <div class="hud-item">
+      <div class="hud-label">PERÍODO</div>
+      <div class="hud-value" id="hud-phase">3º</div>
+    </div>
+    <div class="hud-item" id="hours-bar-wrapper">
+      <div class="hud-label">HORAS DE EXTENSÃO</div>
+      <div id="hours-bar-bg"><div id="hours-bar"></div></div>
+    </div>
+    <div class="hud-item">
+      <div class="hud-label">HORAS</div>
+      <div class="hud-value" id="hud-hours">0/300</div>
+    </div>
+    
+    <div class="hud-actions">
+      <div class="action-icon pause" onclick="togglePause()" title="Pausar Jogo">⏸️</div>
+      <div class="action-icon exit" onclick="exitGame()" title="Sair do Jogo">❌</div>
+    </div>
+  </div>
+  
+  <canvas id="canvas" width="480" height="540"></canvas>
+  
+  <div id="mobile-controls">
+    <div class="ctrl-btn" id="btn-left">◀</div>
+    <div class="ctrl-text">MOVER A<br>CAPIVARA</div>
+    <div class="ctrl-btn" id="btn-right">▶</div>
+  </div>
+
+  <div id="overlay">
+    <video id="overlay-vid-win" class="remove-black-bg" src="videocapivaracomemorando.webm" preload="auto" loop muted playsinline style="display:none;"></video>
+    <video id="overlay-vid-lose" class="remove-black-bg" src="videocapivaratriste.webm" preload="auto" loop muted playsinline style="display:none;"></video>
+    <div id="overlay-content"></div>
+  </div>
+  <div id="toast"></div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+const vidCorrendo = document.getElementById('vid-correndo');
+const overlayVidWin = document.getElementById('overlay-vid-win');
+const overlayVidLose = document.getElementById('overlay-vid-lose');
+
+const PHASES = [
+  { name: '3º Período', target: 60, speed: 1.4, spawnRate: 900, badChance: 0.35, color: '#6699ff', badge: 'badge-blue' },
+  { name: '4º Período', target: 180, speed: 2.0, spawnRate: 750, badChance: 0.50, color: '#ffaa22', badge: 'badge-amber' },
+  { name: '7º Período', target: 300, speed: 2.6, spawnRate: 600, badChance: 0.65, color: '#22ee88', badge: 'badge-green' },
+];
+
+const GOOD_ITEMS = [
+  { type: 'good', id: 'projeto', label: 'Projeto', hours: 15, color: '#007788', bg: '#001a1f', icon: '🚀' },
+  { type: 'good', id: 'programa', label: 'Programa', hours: 12, color: '#cc6600', bg: '#2a1400', icon: '📋' },
+  { type: 'good', id: 'evento', label: 'Evento', hours: 8, color: '#886600', bg: '#1a1200', icon: '🎯' },
+  { type: 'good', id: 'curso', label: 'Curso', hours: 12, color: '#226622', bg: '#0a1a0a', icon: '📚' },
+  { type: 'good', id: 'servico', label: 'Serviços', hours: 10, color: '#883300', bg: '#1a0a00', icon: '🤝' },
+  { type: 'good', id: 'aprendizado', label: 'Aprendizado', hours: 5, color: '#00aa66', bg: '#001a10', icon: '🧠' },
+  { type: 'good', id: 'troca', label: 'Troca\nDialógica', hours: 8, color: '#2255cc', bg: '#0d1a4a', icon: '💬' },
+  { type: 'good', id: 'protagonismo', label: 'Protagonismo', hours: 10, color: '#aa22cc', bg: '#1a0d2a', icon: '⭐' },
+];
+
+const BAD_ITEMS = [
+  { type: 'bad', id: 'visita', label: 'Visita\nTécnica', msg: '❌ Ensino não é Extensão!', color: '#cc5500', bg: '#2a1000', icon: '🚌' },
+  { type: 'bad', id: 'estagio', label: 'Estágio', msg: '❌ Foco no mercado de trabalho!', color: '#cc2222', bg: '#2a0505', icon: '💼' },
+  { type: 'bad', id: 'ic', label: 'Iniciação\nCientífica', msg: '❌ Pesquisa não é Extensão!', color: '#cc9900', bg: '#2a1d00', icon: '🔬' },
+  { type: 'bad', id: 'campo', label: 'Aulas de\nCampo', msg: '❌ Ensino não é Extensão!', color: '#8822cc', bg: '#1d052a', icon: '🧭' }
+];
+
+let player, items, frameId, lastTime, spawnTimer, phase, totalHours, lives;
+let keys = {};
+let btnLeftActive = false;
+let btnRightActive = false;
+let isPaused = false; 
+
+let playerName = "";
+let playerMatricula = "";
+
+let lastGoodSpawned = [];
+let lastBadSpawned = [];
+
+document.addEventListener('keydown', e => { keys[e.key] = true; });
+document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+const btnLeft = document.getElementById('btn-left');
+const btnRight = document.getElementById('btn-right');
+
+btnLeft.addEventListener('mousedown', () => btnLeftActive = true);
+btnLeft.addEventListener('mouseup', () => btnLeftActive = false);
+btnLeft.addEventListener('mouseleave', () => btnLeftActive = false);
+btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); btnLeftActive = true; }, {passive: false});
+btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); btnLeftActive = false; }, {passive: false});
+
+btnRight.addEventListener('mousedown', () => btnRightActive = true);
+btnRight.addEventListener('mouseup', () => btnRightActive = false);
+btnRight.addEventListener('mouseleave', () => btnRightActive = false);
+btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); btnRightActive = true; }, {passive: false});
+btnRight.addEventListener('touchend', (e) => { e.preventDefault(); btnRightActive = false; }, {passive: false});
+
+function hideOverlayVideos() {
+  overlayVidWin.style.display = 'none';
+  overlayVidLose.style.display = 'none';
+  overlayVidWin.pause();
+  overlayVidLose.pause();
+}
+
+function resetInputs() {
+  keys = {};
+  btnLeftActive = false;
+  btnRightActive = false;
+}
+
+function init() {
+  player = { x: W / 2, speed: 6.5 };
+  items = [];
+  lastGoodSpawned = [];
+  lastBadSpawned = [];
+  frameId = null;
+  lastTime = null;
+  spawnTimer = 0;
+  phase = 0;
+  totalHours = 0;
+  lives = 3;
+  isPaused = false;
+  vidCorrendo.play().catch(e => console.log("Aguardando interação"));
+  hideOverlayVideos();
+}
+
+function spawnItem() {
+  const ph = PHASES[phase];
+  
+  let isBad = Math.random() < ph.badChance;
+  let pool = isBad ? BAD_ITEMS : GOOD_ITEMS;
+  let history = isBad ? lastBadSpawned : lastGoodSpawned;
+
+  let available = pool.filter(it => !history.includes(it.id));
+  if (available.length === 0) available = pool; 
+  
+  let chosen = available[Math.floor(Math.random() * available.length)];
+  
+  history.push(chosen.id);
+  if (history.length > (isBad ? 2 : 4)) history.shift();
+
+  items.push({
+    ...chosen,
+    x: Math.random() * (W - 80) + 40,
+    y: -80,
+    w: 76, h: 76,
+    speed: ph.speed + Math.random() * 0.8,
+    wobble: Math.random() * Math.PI * 2,
+    wobbleSpeed: 0.04 + Math.random() * 0.02,
+  });
+}
+
+function drawPlayer() {
+  if (vidCorrendo.readyState >= 2) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen'; 
+    
+    const drawW = 170; 
+    const drawH = 170;
+    const drawX = player.x - (drawW/2);
+    const drawY = (H - 70) - drawH + 15;
+    
+    if(isPaused) { vidCorrendo.pause(); } else { vidCorrendo.play(); }
+    
+    ctx.drawImage(vidCorrendo, drawX, drawY, drawW, drawH);
+    ctx.restore();
+  }
+}
+
+function drawItem(item) {
+  ctx.save();
+  const cx = item.x;
+  const cy = item.y;
+  const wx = Math.sin(item.wobble) * 3;
+
+  ctx.shadowColor = item.color;
+  ctx.shadowBlur = 10;
+  ctx.fillStyle = item.bg;
+  ctx.strokeStyle = item.color;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.roundRect(cx - 38 + wx, cy - 38, 76, 76, 16);
+  ctx.fill(); ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  ctx.font = '32px serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(item.icon, cx + wx, cy - 10);
+
+  ctx.font = 'bold 9px Nunito, sans-serif';
+  ctx.fillStyle = '#ffffff';
+  ctx.textBaseline = 'top';
+  const lines = item.label.split('\n');
+  lines.forEach((line, i) => {
+    ctx.fillText(line, cx + wx, cy + 18 + i * 11);
+  });
+  ctx.restore();
+}
+
+function drawBg() {
+  const ph = PHASES[phase];
+  ctx.fillStyle = '#07071a';
+  ctx.fillRect(0, 0, W, H);
+
+  for (let i = 0; i < 60; i++) {
+    const x = ((i * 137 + 23) % W);
+    const y = ((i * 97 + 11) % H);
+    ctx.fillStyle = `rgba(255,255,255,${0.03 + (i % 5) * 0.01})`;
+    ctx.beginPath(); ctx.arc(x, y, 1, 0, Math.PI * 2); ctx.fill();
+  }
+
+  ctx.strokeStyle = ph.color + '15';
+  ctx.lineWidth = 1;
+  for (let y = 0; y < H; y += 60) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  ctx.fillStyle = '#0d0d28';
+  ctx.fillRect(0, H - 70, W, 70);
+  ctx.strokeStyle = ph.color + '55';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, H - 70); ctx.lineTo(W, H - 70); ctx.stroke();
+
+  ctx.font = '11px "Press Start 2P", monospace';
+  ctx.fillStyle = ph.color + 'aa';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('UFRRJ - ADMINISTRAÇÃO', W / 2, H - 22);
+}
+
+function drawLives() {
+  for (let i = 0; i < 3; i++) {
+    ctx.font = '24px serif';
+    ctx.fillText(i < lives ? '❤️' : '🖤', 20 + i * 32, 30);
+  }
+}
+
+function update(dt) {
+  if (keys['ArrowLeft'] || keys['a'] || keys['A'] || btnLeftActive) player.x -= player.speed * dt * 60;
+  if (keys['ArrowRight'] || keys['d'] || keys['D'] || btnRightActive) player.x += player.speed * dt * 60;
+  
+  player.x = Math.max(50, Math.min(W - 50, player.x));
+
+  spawnTimer -= dt * 1000;
+  if (spawnTimer <= 0) {
+    spawnItem();
+    spawnTimer = PHASES[phase].spawnRate + Math.random() * 400;
+  }
+
+  const ph = PHASES[phase];
+  const py = H - 100; 
+
+  for (let i = items.length - 1; i >= 0; i--) {
+    const it = items[i];
+    it.y += it.speed * dt * 60;
+    it.wobble += it.wobbleSpeed;
+
+    const dist = Math.abs(it.x - player.x);
+    const oy = Math.abs(it.y - py);
+    
+    if (dist < 50 && oy < 55) {
+      if (it.type === 'good') {
+        totalHours = Math.min(300, totalHours + it.hours);
+        showToast(`+${it.hours}h — ${it.label.replace('\n', ' ')}`, '#22cc88');
+      } else {
+        lives--;
+        showToast(it.msg, '#ff4444');
+        if (lives <= 0) { endGame(false); return; }
+      }
+      items.splice(i, 1);
+      updateHUD();
+      continue;
+    }
+
+    if (it.y > H + 50) items.splice(i, 1);
+  }
+
+  if (totalHours >= ph.target && phase < PHASES.length - 1) {
+    phase++;
+    items = [];
+    showPhaseTransition();
+    return; 
+  } else if (totalHours >= 300) {
+    endGame(true);
+    return;
+  }
+}
+
+function updateHUD() {
+  document.getElementById('hud-hours').textContent = `${Math.round(totalHours)}/300`;
+  document.getElementById('hud-phase').textContent = PHASES[phase].name.split(' ')[0];
+  document.getElementById('hours-bar').style.width = (totalHours / 300 * 100) + '%';
+  const bar = document.getElementById('hours-bar');
+  bar.style.background = totalHours < 100 ? 'linear-gradient(90deg,#cc4422,#ff6644)' :
+    totalHours < 200 ? 'linear-gradient(90deg,#cc9900,#ffbb22)' : 'linear-gradient(90deg,#22cc88,#44ffaa)';
+}
+
+function togglePause() {
+  if (!frameId && !isPaused) return; 
+
+  isPaused = !isPaused;
+  const oc = document.getElementById('overlay-content');
+  const overlay = document.getElementById('overlay');
+
+  if (isPaused) {
+    cancelAnimationFrame(frameId); 
+    hideOverlayVideos();
+    resetInputs(); 
+    
+    oc.innerHTML = `
+      <div class="overlay-title" style="color:#6699ff; font-size:20px;">JOGO PAUSADO</div>
+      <div class="overlay-text" style="margin-bottom: 25px;">Respire fundo, beba uma água e planeje sua extensão!</div>
+      <div class="btn-group">
+        <button class="btn green" onclick="togglePause()">▶ RETORNAR</button>
+        <button class="btn dark" onclick="exitGame()">🚪 SAIR PARA O SITE</button>
+      </div>
+    `;
+    overlay.style.display = 'flex';
+  } else {
+    overlay.style.display = 'none';
+    lastTime = null; 
+    frameId = requestAnimationFrame(loop);
+  }
+}
+
+function showPhaseTransition() {
+  cancelAnimationFrame(frameId);
+  resetInputs(); 
+  
+  const ph = PHASES[phase];
+  const oc = document.getElementById('overlay-content');
+  
+  const prevTarget = phase > 0 ? PHASES[phase - 1].target : 0;
+  const horasDaFase = ph.target - prevTarget;
+  
+  hideOverlayVideos();
+  
+  oc.innerHTML = `
+    <div class="phase-badge ${ph.badge}">${ph.name}</div>
+    <div class="overlay-title">Fase ${phase + 1} Iniciada!</div>
+    <div class="overlay-text">
+    Meta dessa fase: <strong>${horasDaFase}h</strong><br><br>
+    As atividades vão cair mais rápido e os perigos aumentarão!</div>
+    <div class="btn-group">
+      <button class="btn green" onclick="resumeGame()">CONTINUAR ▶</button>
+      <button class="btn dark" onclick="exitGame()">🚪 SAIR PARA O SITE</button>
+    </div>
+  `;
+  document.getElementById('overlay').style.display = 'flex';
+}
+
+function resumeGame() {
+  document.getElementById('overlay').style.display = 'none';
+  hideOverlayVideos();
+  lastTime = null;
+  frameId = requestAnimationFrame(loop);
+}
+
+let toastTimer;
+function showToast(msg, color) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.color = color;
+  t.style.borderColor = color + '88';
+  t.style.opacity = '1';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.opacity = '0'; }, 1800);
+}
+
+function endGame(won) {
+  cancelAnimationFrame(frameId);
+  resetInputs();
+  
+  const oc = document.getElementById('overlay-content');
+  hideOverlayVideos();
+
+  if (won) {
+    overlayVidWin.style.display = 'block';
+    overlayVidWin.currentTime = 0;
+    overlayVidWin.play().catch(e=>console.log(e));
+
+    oc.innerHTML = `
+      <div class="overlay-title" style="color:#ffcc44;font-size:15px;">PARABÉNS!</div>
+      <div class="overlay-subtitle" style="color:#aaaacc">Você completou as 300 horas!</div>
+      <div class="win-certificate">
+        <div class="cert-title">★ CERTIFICADO DE CONCLUSÃO ★</div>
+        <div class="cert-name">UFRRJ</div>
+        <div class="cert-body" style="margin-top:6px">
+          Certificamos que<br>
+          <strong style="color:#ffffff; font-size:14px; display:block; margin:6px 0;">${playerName}</strong>
+          Matrícula: <strong style="color:#ffcc44">${playerMatricula}</strong><br><br>
+          do curso de <strong style="color:#ffcc44">Administração</strong> cumpriu com êxito as<br>
+          <strong style="color:#44ffaa">300 horas de Extensão</strong><br>
+          <span style="color:#665500;font-size:10px">APTO(A) PARA COLAÇÃO DE GRAU 🎓</span>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn green" onclick="location.reload()">JOGAR NOVAMENTE</button>
+        <button class="btn dark" onclick="exitGame()">🚪 SAIR PARA O SITE</button>
+      </div>
+    `;
+  } else {
+    overlayVidLose.style.display = 'block';
+    overlayVidLose.currentTime = 0;
+    overlayVidLose.play().catch(e=>console.log(e));
+
+    oc.innerHTML = `
+      <div class="overlay-title" style="color:#ff4444;font-size:13px;">REPROVADO!</div>
+      <div class="overlay-subtitle">Sem as horas obrigatórias,<br>você não pode colar grau.</div>
+      <div class="overlay-text" style="color:#cc8888">
+        Você atingiu apenas <strong style="color:#ff6644">${Math.round(totalHours)}h</strong> das 300h.
+      </div>
+      <div class="btn-group">
+        <button class="btn red" onclick="location.reload()">TENTAR NOVAMENTE</button>
+        <button class="btn dark" onclick="exitGame()">🚪 SAIR PARA O SITE</button>
+      </div>
+    `;
+  }
+  document.getElementById('overlay').style.display = 'flex';
+}
+
+function loop(ts) {
+  frameId = requestAnimationFrame(loop);
+  
+  if (!lastTime) lastTime = ts;
+  const dt = Math.min((ts - lastTime) / 1000, 0.05);
+  lastTime = ts;
+  
+  drawBg();
+  items.forEach(drawItem);
+  drawPlayer();
+  drawLives();
+  update(dt);
+}
+
+function validateAndStart() {
+  const inputNome = document.getElementById('input-nome').value.trim();
+  const inputMatricula = document.getElementById('input-matricula').value.trim();
+
+  if (!inputNome || !inputMatricula) {
+    alert("Por favor, preencha o seu Nome e Matrícula para jogar!");
+    return;
+  }
+
+  if (inputMatricula.length !== 11) {
+    alert("A matrícula deve conter exatamente 11 números!");
+    return;
+  }
+
+  playerName = inputNome;
+  playerMatricula = inputMatricula;
+  
+  startGame();
+}
+
+function startGame() {
+  init();
+  updateHUD();
+  document.getElementById('overlay').style.display = 'none';
+  hideOverlayVideos();
+  
+  lastTime = null;
+  frameId = requestAnimationFrame(loop);
+}
+
+function showStart() {
+  cancelAnimationFrame(frameId);
+  init();
+  updateHUD();
+  
+  hideOverlayVideos();
+  
+  const oc = document.getElementById('overlay-content');
+  oc.innerHTML = `
+    <div style="font-size:36px;margin-bottom:6px">🎓</div>
+    <div class="overlay-title" style="font-size:14px">MISSÃO 300 HORAS</div>
+    
+    <div class="overlay-text" style="color:#ffcc44; font-size:10px; margin-bottom:12px;">
+      Iniciando Fase 1 (3º Período) - <strong>Meta: 60h</strong>
+    </div>
+
+    <div class="input-container">
+      <label class="input-label" for="input-nome">NOME COMPLETO:</label>
+      <input type="text" id="input-nome" class="game-input" placeholder="Digite seu nome..." autocomplete="off">
+    </div>
+    
+    <div class="input-container">
+      <label class="input-label" for="input-matricula">MATRÍCULA:</label>
+      <input type="tel" id="input-matricula" class="game-input" placeholder="Ex: 20230101234" autocomplete="off" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+    </div>
+    
+    <div style="width:100%;max-width:380px;margin-bottom:12px; margin-top:10px;">
+      <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:#44cc88;margin-bottom:8px">✅ CONTA COMO EXTENSÃO</div>
+      <div class="columns-2">
+        <div class="legend-row"><div class="legend-dot" style="background:#001a1f;border:2px solid #007788"></div>🚀 Projeto</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#2a1400;border:2px solid #cc6600"></div>📋 Programa</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#1a1200;border:2px solid #886600"></div>🎯 Evento</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#0a1a0a;border:2px solid #226622"></div>📚 Cursos</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#1a0a00;border:2px solid #883300"></div>🤝 Serviços</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#001a10;border:2px solid #00aa66"></div>🧠 Aprendizado</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#0d1a4a;border:2px solid #2255cc"></div>💬 Troca</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#1a0d2a;border:2px solid #aa22cc"></div>⭐ Protagonismo</div>
+      </div>
+      <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:#ff4444;margin-bottom:8px;margin-top:8px">❌ NÃO CONTA COMO EXTENSÃO</div>
+      <div class="columns-2">
+        <div class="legend-row"><div class="legend-dot" style="background:#2a1000;border:2px solid #cc5500"></div>🚌 Visita Técnica</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#2a0505;border:2px solid #cc2222"></div>💼 Estágio</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#2a1d00;border:2px solid #cc9900"></div>🔬 Inic. Científica</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#1d052a;border:2px solid #8822cc"></div>🧭 Aulas de Campo</div>
+      </div>
+    </div>
+    
+    <div class="btn-group">
+      <button class="btn" onclick="validateAndStart()">▶ INICIAR JOGO</button>
+      <button class="btn dark" onclick="exitGame()">🚪 SAIR PARA O SITE</button>
+    </div>
+  `;
+  document.getElementById('overlay').style.display = 'flex';
+}
+
+function exitGame() {
+  const urlSite = 'index.html'; 
+
+  if (confirm("Tem certeza que deseja sair do jogo? Seu progresso será perdido!")) {
+    if (window.top !== window.self) {
+      window.top.location.href = urlSite; 
+    } else {
+      window.location.href = urlSite; 
+    }
+  }
+}
+
+let touchStartX = null;
+canvas.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+canvas.addEventListener('touchmove', e => {
+  if (touchStartX === null) return;
+  const dx = e.touches[0].clientX - touchStartX;
+  player.x += dx * 0.8;
+  
+  player.x = Math.max(50, Math.min(W - 50, player.x));
+  
+  touchStartX = e.touches[0].clientX;
+  e.preventDefault();
+}, { passive: false });
+canvas.addEventListener('touchend', () => { touchStartX = null; });
+
+showStart();
+</script>
+</body>
+</html>
