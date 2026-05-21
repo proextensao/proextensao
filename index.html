@@ -277,11 +277,24 @@
 
         /* AJUSTE EXCLUSIVO DO VÍDEO DA ABELHA NO CELULAR: PAREDE DE BORDA A BORDA */
         @media (max-width: 600px) {
-            .detalhe-card.area-rural { padding-left: 0 !important; padding-right: 0 !important; }
-            .detalhe-card.area-rural .detalhe-header, .detalhe-card.area-rural .detalhe-conteudo { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
-            .detalhe-card.area-rural .detalhe-media { width: 100% !important; max-width: 100% !important; height: auto !important; aspect-ratio: 1 / 1 !important; margin: 0 !important; }
-            .detalhe-card.area-rural .detalhe-media video { width: 100% !important; height: 100% !important; object-fit: cover !important; transform: scale(1) !important; }
-        }
+    .detalhe-card.area-rural { padding-left: 0 !important; padding-right: 0 !important; }
+    .detalhe-card.area-rural .detalhe-header, .detalhe-card.area-rural .detalhe-conteudo { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+    .detalhe-card.area-rural .detalhe-media {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 220px !important;
+        aspect-ratio: unset !important;
+        margin: 0 0 1rem 0 !important;
+        overflow: hidden !important;
+    }
+    .detalhe-card.area-rural .detalhe-media video {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        transform: scale(1) !important;
+        position: relative !important;
+    }
+}
 
         /* --- RESPONSIVIDADE CELULAR --- */
         @media (max-width: 600px) {
