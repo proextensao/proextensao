@@ -9,7 +9,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         
         body { 
-            background-color: #000000; 
+            background-color: #080810; 
             color: #ffffff; 
             min-height: 100vh; 
             display: flex; 
@@ -19,43 +19,55 @@
             overflow-x: hidden; 
             transition: background-color 0.5s ease;
         }
-/* --- EFEITO AURORA (IDÊNTICO AO APP GEMINI) --- */
-        body::before, body::after {
-            content: "";
-            position: fixed; 
-            top: -20%;
-            left: -20%;
-            width: 140vw; 
-            height: 140vh;
-            z-index: 0; 
-            pointer-events: none; 
-            filter: blur(100px); 
-            opacity: 0.6; 
-            mix-blend-mode: screen; 
-        }
 
+        /* --- AURORA GEMINI: concentrada embaixo, orgânica, sem mix-blend-mode --- */
         body::before {
-            background: radial-gradient(circle at 25% 25%, rgba(26, 115, 232, 0.75) 0%, transparent 45%),
-                        radial-gradient(circle at 75% 35%, rgba(161, 66, 244, 0.65) 0%, transparent 50%);
-            animation: movimentoGemini1 12s infinite alternate ease-in-out;
+            content: "";
+            position: fixed;
+            bottom: -10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120vw;
+            height: 70vh;
+            z-index: 0;
+            pointer-events: none;
+            background: 
+                radial-gradient(ellipse 80% 60% at 30% 100%, rgba(30, 80, 220, 0.55) 0%, transparent 65%),
+                radial-gradient(ellipse 70% 50% at 70% 90%, rgba(100, 30, 200, 0.45) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 50% 100%, rgba(60, 20, 160, 0.4) 0%, transparent 55%);
+            filter: blur(60px);
+            animation: auroraBase 18s ease-in-out infinite alternate;
         }
 
         body::after {
-            background: radial-gradient(circle at 60% 65%, rgba(249, 171, 0, 0.35) 0%, transparent 45%),
-                        radial-gradient(circle at 35% 75%, rgba(0, 229, 255, 0.3) 0%, transparent 45%);
-            animation: movimentoGemini2 15s infinite alternate-reverse ease-in-out;
+            content: "";
+            position: fixed;
+            bottom: -5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 55vh;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 60% 50% at 20% 100%, rgba(20, 60, 200, 0.4) 0%, transparent 60%),
+                radial-gradient(ellipse 55% 45% at 80% 95%, rgba(130, 40, 220, 0.35) 0%, transparent 55%),
+                radial-gradient(ellipse 40% 35% at 50% 80%, rgba(80, 100, 255, 0.2) 0%, transparent 50%);
+            filter: blur(80px);
+            animation: auroraTop 22s ease-in-out infinite alternate-reverse;
         }
 
-        @keyframes movimentoGemini1 {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(6%, 8%) scale(1.15); }
-            100% { transform: translate(-6%, 5%) scale(0.9); }
+        @keyframes auroraBase {
+            0%   { transform: translateX(-50%) scaleX(1)    scaleY(1);    opacity: 1; }
+            33%  { transform: translateX(-48%) scaleX(1.08) scaleY(1.05); opacity: 0.85; }
+            66%  { transform: translateX(-52%) scaleX(0.95) scaleY(1.08); opacity: 0.95; }
+            100% { transform: translateX(-50%) scaleX(1.04) scaleY(0.96); opacity: 1; }
         }
 
-        @keyframes movimentoGemini2 {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(-8%, -6%) scale(1.1); }
-            100% { transform: translate(8%, -4%) scale(0.95); }
+        @keyframes auroraTop {
+            0%   { transform: translateX(-50%) scaleX(1)    scaleY(1);    opacity: 0.8; }
+            50%  { transform: translateX(-53%) scaleX(1.1)  scaleY(1.1);  opacity: 1; }
+            100% { transform: translateX(-47%) scaleX(0.92) scaleY(0.95); opacity: 0.75; }
         }
         /* --- BOTÃO DE VOLTAR PADRONIZADO E 100% FORA DOS BALÕES --- */
         .btn-voltar-global { position: fixed; top: 30px; left: 30px; background: rgba(255,255,255,0.07); color: rgba(200, 220, 255, 0.8); border: 1px solid rgba(168, 210, 255, 0.25); padding: 0.6rem 1.2rem; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; z-index: 1000; transition: 0.3s; backdrop-filter: blur(10px); }
@@ -68,22 +80,23 @@
 
         section { width: 100%; max-width: 1200px; position: relative; }
 
-        /* --- TÍTULOS GRADIENTE --- */
+        /* --- TÍTULOS: brancos, grandes, brilho suave --- */
         #tela-inicial h1, #tela-sobre h1, #main-header h1 {
-            background: linear-gradient(120deg, #ffffff 0%, #a8d8ff 40%, #d4aaff 70%, #ffffff 100%);
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            display: inline-block;
-            filter: drop-shadow(0 0 30px rgba(168, 216, 255, 0.4));
+            color: #ffffff;
+            -webkit-text-fill-color: #ffffff;
+            text-shadow: 0 0 40px rgba(120, 160, 255, 0.35), 0 0 80px rgba(100, 80, 220, 0.2);
+            display: block;
+            font-weight: 300;
+            letter-spacing: -0.5px;
         }
 
         /* =========================================
            TELA 1: BOAS VINDAS
            ========================================= */
         #tela-inicial { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center; animation: surgirTela 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        #tela-inicial h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 2rem; letter-spacing: -1px; position: relative; z-index: 20; }
-        .animacao-boas-vindas { width: 600px; height: auto; margin: 0 auto; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: flutuar 5s ease-in-out infinite; background: transparent; }
-        .video-inicial { width: 100%; height: auto; object-fit: contain; mix-blend-mode: screen; }
+        #tela-inicial h1 { font-size: 4.2rem; font-weight: 300; margin-bottom: 2rem; letter-spacing: -1px; position: relative; z-index: 20; }
+        .animacao-boas-vindas { width: 600px; height: auto; margin: 0 auto; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: flutuar 5s ease-in-out infinite; z-index: 10; mix-blend-mode: screen; }
+        .video-inicial { width: 100%; height: auto; object-fit: contain; filter: contrast(1.4) brightness(0.85); mix-blend-mode: screen; }
 
         /* --- SEEK BAR --- */
         .controles-video { width: 70%; max-width: 350px; margin: 10px auto 0; z-index: 25; position: relative; }
@@ -383,8 +396,7 @@
     <section id="tela-inicial">
         <h1>Projetos de Extensão</h1>
         <div class="animacao-boas-vindas">
-            <video id="video-boas-vindas" src="videoinicialsemfundo.webm" autoplay loop muted playsinline style="display:none;"></video>
-            <canvas id="canvas-boas-vindas" class="video-inicial"></canvas>
+            <video id="video-boas-vindas" src="videoinicialsemfundo.webm" autoplay loop muted playsinline class="video-inicial"></video>
             <div class="controles-video">
                 <input type="range" id="seek-bar" value="0" step="0.1">
             </div>
@@ -583,83 +595,7 @@
             }
         }
 
-        // --- WEBGL: remove fundo preto do vídeo na GPU (rápido) ---
         const videoBoasVindas = document.getElementById('video-boas-vindas');
-        const canvas = document.getElementById('canvas-boas-vindas');
-        let animFrameId = null;
-
-        const gl = canvas.getContext('webgl', { premultipliedAlpha: false, alpha: true });
-
-        const vsSource = `
-            attribute vec2 a_pos;
-            attribute vec2 a_uv;
-            varying vec2 v_uv;
-            void main() { gl_Position = vec4(a_pos, 0, 1); v_uv = a_uv; }
-        `;
-        const fsSource = `
-            precision mediump float;
-            uniform sampler2D u_tex;
-            varying vec2 v_uv;
-            void main() {
-                vec4 c = texture2D(u_tex, v_uv);
-                float brightness = dot(c.rgb, vec3(0.333));
-                float alpha = smoothstep(0.05, 0.25, brightness);
-                gl_FragColor = vec4(c.rgb, c.a * alpha);
-            }
-        `;
-
-        function compileShader(type, src) {
-            const s = gl.createShader(type);
-            gl.shaderSource(s, src); gl.compileShader(s); return s;
-        }
-        const prog = gl.createProgram();
-        gl.attachShader(prog, compileShader(gl.VERTEX_SHADER, vsSource));
-        gl.attachShader(prog, compileShader(gl.FRAGMENT_SHADER, fsSource));
-        gl.linkProgram(prog); gl.useProgram(prog);
-
-        const buf = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-            -1,-1, 0,1,  1,-1, 1,1,  -1,1, 0,0,  1,1, 1,0
-        ]), gl.STATIC_DRAW);
-
-        const aPos = gl.getAttribLocation(prog, 'a_pos');
-        const aUv  = gl.getAttribLocation(prog, 'a_uv');
-        gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 16, 0);
-        gl.enableVertexAttribArray(aUv);  gl.vertexAttribPointer(aUv,  2, gl.FLOAT, false, 16, 8);
-
-        const tex = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-        function renderFrame() {
-            if (videoBoasVindas.paused || videoBoasVindas.ended || videoBoasVindas.readyState < 2) {
-                animFrameId = requestAnimationFrame(renderFrame); return;
-            }
-            if (canvas.width !== videoBoasVindas.videoWidth) {
-                canvas.width  = videoBoasVindas.videoWidth  || 600;
-                canvas.height = videoBoasVindas.videoHeight || 600;
-                gl.viewport(0, 0, canvas.width, canvas.height);
-            }
-            gl.clear(gl.COLOR_BUFFER_BIT);
-            gl.bindTexture(gl.TEXTURE_2D, tex);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, videoBoasVindas);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-            animFrameId = requestAnimationFrame(renderFrame);
-        }
-
-        videoBoasVindas.addEventListener('play', () => {
-            cancelAnimationFrame(animFrameId);
-            renderFrame();
-        });
-        videoBoasVindas.addEventListener('pause', () => cancelAnimationFrame(animFrameId));
-        videoBoasVindas.addEventListener('ended', () => cancelAnimationFrame(animFrameId));
 
         const seekBar = document.getElementById('seek-bar');
         if (videoBoasVindas && seekBar) {
@@ -679,7 +615,7 @@
         let acaoBtnVoltar = () => {}; 
         function mostrarBtnVoltar(fn) { acaoBtnVoltar = fn; btnVoltar.style.display = 'block'; }
         function esconderBtnVoltar() { btnVoltar.style.display = 'none'; }
-        function pausarVideo() { const v = document.getElementById('video-boas-vindas'); if (v) { v.pause(); cancelAnimationFrame(animFrameId); } }
+        function pausarVideo() { const v = document.getElementById('video-boas-vindas'); if (v) v.pause(); }
         function retomarVideo() { const v = document.getElementById('video-boas-vindas'); if (v) v.play(); }
 
         let isTransitioning = false;
