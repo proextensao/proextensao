@@ -19,69 +19,43 @@
             overflow-x: hidden; 
             transition: background-color 0.5s ease;
         }
-/* --- EFEITO AURORA (ESTILO GEMINI PREMIUM) --- */
+/* --- EFEITO AURORA (IDÊNTICO AO APP GEMINI) --- */
         body::before, body::after {
             content: "";
             position: fixed; 
-            top: -50%;
-            left: -50%;
-            width: 200vw;
-            height: 200vh;
-            z-index: 0; /* No lugar certo para ficar atrás do conteúdo e na frente do fundo */
+            top: -20%;
+            left: -20%;
+            width: 140vw; 
+            height: 140vh;
+            z-index: 0; 
             pointer-events: none; 
-            filter: blur(100px); /* Desfoque ajustado para as cores se fundirem perfeitamente */
-            opacity: 0.7; 
+            filter: blur(80px); 
+            opacity: 0.95; 
+            mix-blend-mode: screen; 
         }
 
-        /* Primeira camada: Azul profundo e Roxo (Base) */
         body::before {
-            background: radial-gradient(circle at 30% 30%, rgba(41, 128, 185, 0.6), transparent 50%),
-                        radial-gradient(circle at 70% 60%, rgba(142, 68, 173, 0.5), transparent 50%);
-            animation: respiracaoAurora 22s infinite alternate ease-in-out;
+            background: radial-gradient(circle at 25% 25%, rgba(26, 115, 232, 0.9) 0%, transparent 45%),
+                        radial-gradient(circle at 75% 35%, rgba(161, 66, 244, 0.85) 0%, transparent 50%);
+            animation: movimentoGemini1 12s infinite alternate ease-in-out;
         }
 
-        /* Segunda camada: Ciano e um toque quente de Laranja (Detalhes) */
         body::after {
-            background: radial-gradient(circle at 60% 30%, rgba(0, 188, 212, 0.4), transparent 50%),
-                        radial-gradient(circle at 40% 80%, rgba(243, 156, 18, 0.2), transparent 50%);
-            animation: respiracaoAuroraInversa 28s infinite alternate ease-in-out;
+            background: radial-gradient(circle at 60% 65%, rgba(249, 171, 0, 0.55) 0%, transparent 45%),
+                        radial-gradient(circle at 35% 75%, rgba(0, 229, 255, 0.45) 0%, transparent 45%);
+            animation: movimentoGemini2 15s infinite alternate-reverse ease-in-out;
         }
 
-        /* Animação 1: Movimento contínuo */
-        @keyframes respiracaoAurora {
-            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-            33% { transform: translate(2%, 4%) rotate(2deg) scale(1.05); }
-            66% { transform: translate(-2%, 2%) rotate(-2deg) scale(1.1); }
-            100% { transform: translate(-4%, -2%) rotate(-4deg) scale(0.95); }
+        @keyframes movimentoGemini1 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(6%, 8%) scale(1.15); }
+            100% { transform: translate(-6%, 5%) scale(0.9); }
         }
 
-        /* Animação 2: Movimento oposto, criando a ilusão de mistura de fluidos */
-        @keyframes respiracaoAuroraInversa {
-            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-            33% { transform: translate(-3%, -4%) rotate(-2deg) scale(1.1); }
-            66% { transform: translate(3%, -2%) rotate(2deg) scale(1.05); }
-            100% { transform: translate(2%, 4%) rotate(4deg) scale(0.95); }
-        }
-
-        /* Primeira camada: Tons de Azul e Roxo (Base do Gemini) */
-        body::before {
-            background: radial-gradient(circle at 40% 40%, rgba(41, 128, 185, 0.4), transparent 45%),
-                        radial-gradient(circle at 60% 60%, rgba(142, 68, 173, 0.35), transparent 45%);
-        }
-
-        /* Segunda camada: Toques de Ciano e Laranja/Amarelo */
-        body::after {
-            background: radial-gradient(circle at 70% 30%, rgba(243, 156, 18, 0.15), transparent 40%),
-                        radial-gradient(circle at 30% 70%, rgba(0, 188, 212, 0.25), transparent 40%);
-            animation-duration: 30s; /* Tempo diferente para criar um movimento caótico/orgânico */
-            animation-delay: -10s;
-        }
-
-        /* Animação suave de movimento e respiração */
-        @keyframes flutuarAurora {
-            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-            50% { transform: translate(3%, 5%) rotate(3deg) scale(1.05); }
-            100% { transform: translate(-3%, -2%) rotate(-3deg) scale(0.95); }
+        @keyframes movimentoGemini2 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-8%, -6%) scale(1.1); }
+            100% { transform: translate(8%, -4%) scale(0.95); }
         }
         /* --- BOTÃO DE VOLTAR PADRONIZADO E 100% FORA DOS BALÕES --- */
         .btn-voltar-global { position: fixed; top: 30px; left: 30px; background: rgba(0,0,0,0.6); color: #8b949e; border: 1px solid #30363d; padding: 0.6rem 1.2rem; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; z-index: 1000; transition: 0.3s; backdrop-filter: blur(5px); }
