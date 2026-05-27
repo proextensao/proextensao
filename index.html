@@ -383,7 +383,8 @@
     <section id="tela-inicial">
         <h1>Projetos de Extensão</h1>
         <div class="animacao-boas-vindas">
-            <video id="video-boas-vindas" src="videoinicialsemfundo.webm" autoplay loop muted playsinline class="video-inicial"></video>
+            <video id="video-boas-vindas" src="videoinicialsemfundo.webm" autoplay loop muted playsinline style="display:none;"></video>
+            <canvas id="canvas-boas-vindas" class="video-inicial"></canvas>
             <div class="controles-video">
                 <input type="range" id="seek-bar" value="0" step="0.1">
             </div>
@@ -582,7 +583,39 @@
             }
         }
 
+        // --- CANVAS: remove fundo preto do vídeo ---
         const videoBoasVindas = document.getElementById('video-boas-vindas');
+        const canvas = document.getElementById('canvas-boas-vindas');
+        const ctx = canvas.getContext('2d');
+        let animFrameId = null;
+
+        function renderFrame() {
+            if (videoBoasVindas.paused || videoBoasVindas.ended) return;
+            canvas.width = videoBoasVindas.videoWidth || 600;
+            canvas.height = videoBoasVindas.videoHeight || 600;
+            ctx.drawImage(videoBoasVindas, 0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i], g = data[i+1], b = data[i+2];
+                const brightness = (r + g + b) / 3;
+                if (brightness < 30) {
+                    data[i+3] = 0; // totalmente transparente
+                } else if (brightness < 80) {
+                    data[i+3] = Math.round((brightness - 30) / 50 * 255); // fade suave
+                }
+            }
+            ctx.putImageData(imageData, 0, 0);
+            animFrameId = requestAnimationFrame(renderFrame);
+        }
+
+        videoBoasVindas.addEventListener('play', () => {
+            cancelAnimationFrame(animFrameId);
+            renderFrame();
+        });
+        videoBoasVindas.addEventListener('pause', () => cancelAnimationFrame(animFrameId));
+        videoBoasVindas.addEventListener('ended', () => cancelAnimationFrame(animFrameId));
+
         const seekBar = document.getElementById('seek-bar');
         if (videoBoasVindas && seekBar) {
             videoBoasVindas.addEventListener('timeupdate', () => {
@@ -601,7 +634,7 @@
         let acaoBtnVoltar = () => {}; 
         function mostrarBtnVoltar(fn) { acaoBtnVoltar = fn; btnVoltar.style.display = 'block'; }
         function esconderBtnVoltar() { btnVoltar.style.display = 'none'; }
-        function pausarVideo() { const v = document.getElementById('video-boas-vindas'); if (v) v.pause(); }
+        function pausarVideo() { const v = document.getElementById('video-boas-vindas'); if (v) { v.pause(); cancelAnimationFrame(animFrameId); } }
         function retomarVideo() { const v = document.getElementById('video-boas-vindas'); if (v) v.play(); }
 
         let isTransitioning = false;
