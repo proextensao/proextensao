@@ -9,10 +9,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         
         body { 
-            ackground:
-#050510;
-
-overflow:hidden;
             background-color: #05050d; 
             color: #ffffff; 
             min-height: 100vh; 
@@ -26,14 +22,6 @@ overflow:hidden;
 
         /* Canvas de partículas estrela — fixo, atrás de tudo */
         #aurora-canvas {
-            #particles-canvas{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    z-index:1;
-    pointer-events:none;
-}
             position: fixed;
             bottom: 0;
             left: 0;
@@ -44,61 +32,24 @@ overflow:hidden;
         }
 
         /* Glow difuso embaixo — pink/roxo/azul como o Gemini */
-        body::before{
-    content:'';
-    position:fixed;
-    inset:0;
-    z-index:0;
-    pointer-events:none;
+        body::before {
+            content: "";
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140vw;
+            height: 50vh;
+            z-index: 0;
+            pointer-events: none;
+            background: 
+                radial-gradient(ellipse 70% 80% at 30% 110%, rgba(200, 40, 180, 0.55) 0%, transparent 60%),
+                radial-gradient(ellipse 70% 80% at 70% 110%, rgba(30, 60, 220, 0.55) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 60% at 50% 110%, rgba(120, 20, 160, 0.5) 0%, transparent 55%);
+            filter: blur(55px);
+            animation: auroraGlow 20s ease-in-out infinite alternate;
+        }
 
-    background:
-    radial-gradient(circle at 20% 80%,
-    rgba(255,0,140,0.35),
-    transparent 30%),
-
-    radial-gradient(circle at 80% 80%,
-    rgba(0,120,255,0.35),
-    transparent 30%),
-
-    radial-gradient(circle at 50% 100%,
-    rgba(140,0,255,0.25),
-    transparent 40%);
-
-    filter: blur(90px);
-
-    animation: auroraMove 12s ease-in-out infinite alternate;
-}
-@keyframes auroraMove{
-    0%{
-        transform:scale(1) translateY(0px);
-    }
-
-    100%{
-        transform:scale(1.1) translateY(-20px);
-    }
-}
-        body::after{
-    content:'';
-    position:fixed;
-    inset:0;
-    z-index:0;
-    pointer-events:none;
-
-    background:
-    radial-gradient(circle at 70% 75%,
-    rgba(0,180,255,0.18),
-    transparent 25%),
-
-    radial-gradient(circle at 30% 85%,
-    rgba(180,0,255,0.12),
-    transparent 30%);
-
-    filter: blur(120px);
-
-    mix-blend-mode: screen;
-
-    animation: auroraFloat 18s ease-in-out infinite alternate;
-}
         body::after { display: none; }
 
         @keyframes auroraGlow {
@@ -107,22 +58,6 @@ overflow:hidden;
             70%  { transform: translateX(-52%) scaleX(0.95); opacity: 0.95; }
             100% { transform: translateX(-50%) scaleX(1.04); opacity: 1; }
         }
-        @keyframes auroraFloat{
-
-    0%{
-        transform:
-        translateX(0px)
-        translateY(0px)
-        scale(1);
-    }
-
-    100%{
-        transform:
-        translateX(30px)
-        translateY(-15px)
-        scale(1.15);
-    }
-}
         /* --- BOTÃO DE VOLTAR PADRONIZADO E 100% FORA DOS BALÕES --- */
         .btn-voltar-global { position: fixed; top: 30px; left: 30px; background: rgba(255,255,255,0.07); color: rgba(200, 220, 255, 0.8); border: 1px solid rgba(168, 210, 255, 0.25); padding: 0.6rem 1.2rem; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; z-index: 1000; transition: 0.3s; backdrop-filter: blur(10px); }
         .btn-voltar-global:hover { background: rgba(100, 160, 255, 0.2); color: #ffffff; border-color: rgba(168, 210, 255, 0.5); }
@@ -132,80 +67,7 @@ overflow:hidden;
         @keyframes sumirTela { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-40px); } }
         @keyframes flutuar { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
-        section { width: 100%; max-width: 1200px; position: relative; z-index: 5; }
-        body::before,
-body::after{
-    will-change: transform;
-}
-
-#particles-canvas{
-    opacity:0.6;
-    filter: blur(0.3px);
-}
-
-.glow-orb{
-    position:fixed;
-    border-radius:50%;
-    filter:blur(120px);
-    pointer-events:none;
-    z-index:1;
-    mix-blend-mode:screen;
-}
-
-.glow1{
-    width:400px;
-    height:400px;
-
-    background:
-    rgba(0,140,255,0.18);
-
-    bottom:-120px;
-    right:-100px;
-
-    animation:
-    orbFloat1 16s ease-in-out infinite alternate;
-}
-
-.glow2{
-    width:350px;
-    height:350px;
-
-    background:
-    rgba(180,0,255,0.16);
-
-    bottom:-100px;
-    left:-80px;
-
-    animation:
-    orbFloat2 20s ease-in-out infinite alternate;
-}
-        @keyframes orbFloat1{
-    0%{
-        transform:
-        translateY(0px)
-        translateX(0px);
-    }
-
-    100%{
-        transform:
-        translateY(-40px)
-        translateX(-20px);
-    }
-}
-
-@keyframes orbFloat2{
-    0%{
-        transform:
-        translateY(0px)
-        translateX(0px);
-    }
-
-    100%{
-        transform:
-        translateY(-30px)
-        translateX(25px);
-    }
-}
+        section { width: 100%; max-width: 1200px; position: relative; z-index: 2; }
 
         /* --- TÍTULOS: brancos, bold, brilho suave --- */
         #tela-inicial h1, #tela-sobre h1, #main-header h1 {
@@ -533,9 +395,6 @@ body::after{
 </head>
 <body>
     <canvas id="aurora-canvas"></canvas>
-    <canvas id="particles-canvas"></canvas>
-    <div class="glow-orb glow1"></div>
-<div class="glow-orb glow2"></div>
     <button id="btn-voltar-unico" class="btn-voltar-global" style="display:none;" onclick="acaoBtnVoltar()">⬅ Voltar</button>
 
     <section id="tela-inicial">
@@ -986,67 +845,5 @@ body::after{
         })();
 
     </script>
-    <script>
-const canvas = document.getElementById('particles-canvas');
-const ctx = canvas.getContext('2d');
-
-let particles = [];
-
-function resize(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-
-window.addEventListener('resize', resize);
-resize();
-
-for(let i = 0; i < 80; i++){
-
-    particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 2,
-        speedX: (Math.random() - 0.5) * 0.15,
-        speedY: (Math.random() - 0.5) * 0.15,
-        opacity: Math.random() * 0.5
-    });
-}
-
-function animate(){
-
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    particles.forEach(p => {
-
-        p.x += p.speedX;
-        p.y += p.speedY;
-
-        if(p.x < 0) p.x = canvas.width;
-        if(p.x > canvas.width) p.x = 0;
-
-        if(p.y < 0) p.y = canvas.height;
-        if(p.y > canvas.height) p.y = 0;
-
-        ctx.beginPath();
-
-        ctx.arc(
-            p.x,
-            p.y,
-            p.size,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fillStyle =
-        `rgba(255,255,255,${p.opacity})`;
-
-        ctx.fill();
-    });
-
-    requestAnimationFrame(animate);
-}
-
-animate();
-</script>
 </body>
 </html>
